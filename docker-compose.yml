@@ -10,6 +10,7 @@ services:
       - "8024:8024"
     networks:
       - auth-network
+      - default
     depends_on:
       db:
         condition: service_started
@@ -32,3 +33,6 @@ services:
 networks:
   auth-network:
     driver: bridge
+  default:
+    external:
+      name: kafka-network
