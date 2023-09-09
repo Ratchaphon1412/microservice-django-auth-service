@@ -2,6 +2,9 @@ from django.shortcuts import render
 from rest_framework import generics, permissions, mixins
 from rest_framework.response import Response
 from .serializers import RegisterSerializer, UserSerializer
+from Infrastructure.kafka.producer import sendData
+
+
 
 
 #Register API
@@ -22,4 +25,12 @@ class RegisterAPI(generics.GenericAPIView):
             })
 
 
-# Create your views here.
+class TestSendTOKafka(generics.GenericAPIView):
+    def get(self,request,*args,**kwargs):
+        
+        
+        response_kafka = sendData("test",str({'data':'test','data2':'test2'}))
+        print (response_kafka)
+        return Response({
+            "message":response_kafka
+        })
