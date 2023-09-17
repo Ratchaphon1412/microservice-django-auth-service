@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import *
 from Infrastructure.kafka.producer import sendData
 
@@ -32,7 +33,6 @@ class UpdateUserAPI(APIView):
         return Response(
             status=status.HTTP_200_OK,
             data={
-            "user":UserProfilesSerializer(serializers.instance).data,
             "message":"User Updated Successfully.",
         })
     
@@ -48,7 +48,22 @@ class DeleteUserAPI(APIView):
             data={
             "message":"User Deleted Successfully.",
         })
-        
+
+class GetUserAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfilesSerializer
+    def get(self,request):
+        serializers = self.serializer_class(request.user)
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+            "user":UserProfilesSerializer(serializers.instance).data,
+            "message":"User Details.",
+        })
+
+class LoginAPIView(TokenObtainPairView):
+    serializer_class = LoginSerializer
+
 # class ListAllUsersAPI(APIView):
 #     permission_classes = [IsAuthenticated]
 #     serializer_class = UserProfilesSerializer
