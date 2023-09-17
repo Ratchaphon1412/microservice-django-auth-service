@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import password_validation
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import *
 
 
@@ -58,3 +59,22 @@ class UserProfilesSerializer(serializers.ModelSerializer):
         return instance.delete()
     
 
+class LoginSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls,user):
+        token = super().get_token(user)
+        return token
+    
+    def validate(self,attrs):
+        
+        user = UserProfiles.objects.filter(email=attrs.get('email','')).first()
+        
+        if not user.is_active:
+            raise serializers.ValidationError("User is not active.")
+        
+        if not user.is_email_verified:
+            raise serializers.ValidationError("User is not verified.")
+        
+        data = super(LoginSerializer,self).validate(attrs)
+        
+        return data
