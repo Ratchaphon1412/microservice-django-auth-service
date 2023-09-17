@@ -1,36 +1,63 @@
-from django.shortcuts import render
-from rest_framework import generics, permissions, mixins
+
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import RegisterSerializer, UserSerializer
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from .serializers import *
 from Infrastructure.kafka.producer import sendData
 
 
 
 
 #Register API
-class RegisterAPI(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
+class RegisterUserAPI(APIView):
+    serializer_class = UserProfilesSerializer
+    def post(self,request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response({
-                "user":UserSerializer(serializer.instance).data,
-                "message":"User Created Successfully.  Now perform Login to get your token",
-            })
-        else:
-            return Response({
-                "user":serializer.errors,
-                "message":"User Creation Failed",
-            })
-
-
-class TestSendTOKafka(generics.GenericAPIView):
-    def get(self,request,*args,**kwargs):
+            
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data={"message":"Successfully Registered.",})
         
-        
-        response_kafka = sendData("test",str({'data':'test','data2':'test2'}))
-        print (response_kafka)
-        return Response({
-            "message":response_kafka
+    
+class UpdateUserAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfilesSerializer
+    def put(self,request):
+        serializers = self.serializer_class(request.user,data=request.data,partial=True)
+        if serializers.is_valid(raise_exception=True):
+            serializers.save()
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+            "user":UserProfilesSerializer(serializers.instance).data,
+            "message":"User Updated Successfully.",
         })
+    
+
+class DeleteUserAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfilesSerializer
+    def delete(self,request):
+        serializers = self.serializer_class(request.user)
+        serializers.delete(request.user)
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+            "message":"User Deleted Successfully.",
+        })
+        
+# class ListAllUsersAPI(APIView):
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = UserProfilesSerializer
+#     def get(self,request):
+#         users = UserProfiles.objects.all()
+#         serializers = self.get_serializer(users,many=True)
+#         return Response(
+#             status=status.HTTP_200_OK,
+#             data={
+#             "users":serializers.data,
+#             "message":"List of all users.",
+#         })
