@@ -109,6 +109,7 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+AUTH_USER_MODEL = 'User.UserProfiles'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -137,7 +138,7 @@ SIMPLE_JWT = {
     "SIGNING_KEY": os.getenv('SECRET_KEY'),
     "VERIFYING_KEY":"",
     "AUDIENCE": None,
-    "ISSUER": os.getenv('JWT_ISSUER'),
+    "ISSUER": None,
     "JSON_ENCODER": None,
     "JWK_URL": None,
     "LEEWAY": 0,
@@ -145,7 +146,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
-    "USER_ID_CLAIM": "iss",
+    "USER_ID_CLAIM": "user_id",
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
 
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
