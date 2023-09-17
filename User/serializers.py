@@ -1,25 +1,60 @@
 from rest_framework import serializers
-from rest_framework.permissions import IsAuthenticated
-from django.db import models
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth import password_validation
+from .models import *
 
-class RegisterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'password']
+
+class UserProfilesSerializer(serializers.ModelSerializer):
+    class Meta :
+        model = UserProfiles
+        fields = '__all__'
+        read_only_fields = ['id']
         extra_kwargs = {
-            'password':{'write_only':True}
+            'password':{'write_only':True},
+            'last_login':{'write_only':True},
+            
         }
-    def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = User.objects.create_user(**validated_data)
-        user.password = make_password(password)
+      
+    def validate(self, attrs):
+        # password
+        password = attrs.get('password','')
+        errors = dict()
+        try:
+            password_validation.validate_password(password=password)
+        except password_validation.ValidationError as e:
+            errors['password'] = list(e.messages)
+        
+        
+        
+        if errors:
+            raise serializers.ValidationError(errors)
+        
+        return super(UserProfilesSerializer,self).validate(attrs)
+    
+    def create(self,validated_data):
+        password = validated_data.pop('password',None)
+        
+        user = self.Meta.model(**validated_data)
+        if password is not None:
+            user.set_password(password)
+        
         user.save()
         return user
     
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
+    def update(self, instance, validated_data):
+        
+        password = validated_data.pop('password',None)
+        
+        if password is not None:
+            instance.set_password(password)
+        
+           
+        for attr,value in validated_data.items():
+            setattr(instance,attr,value)
+        instance.save()
+        
+        return super().update(instance, validated_data)
+    
+    def delete(self, instance):
+        return instance.delete()
+    
+
