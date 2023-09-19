@@ -95,6 +95,36 @@ class ReSendEmailVerifySerializer(serializers.Serializer):
                 raise serializers.ValidationError("User is already verified.")
             
             return value
+        
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ['address_id','fullname','phone','detail_address','country','province','zip_code']
+        read_only_fields = ['address_id']
+        extra_kwargs = {
+            'user':{'write_only':True},
+            
+        }
+        
+    def validate(self, attrs):
+        
+        
+        return super(AddressSerializer,self).validate(attrs)
+        
+        
+    def create(self,validated_data):
+        
+        address = self.Meta.model(**validated_data)
+        address.save()
+        return address
+    
+    def update(self, instance, validated_data):
+        for attr,value in validated_data.items():
+            setattr(instance,attr,value)
+        instance.save()
+        
+        return super().update(instance, validated_data)
+    
             
         
         
