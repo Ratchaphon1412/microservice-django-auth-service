@@ -134,8 +134,6 @@ class ReSendEmailVerify(APIView):
             data={
             "message":"Email Verification Link Sent Successfully.",
         })
-      
-        
    
             
     
