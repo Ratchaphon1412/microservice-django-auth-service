@@ -78,3 +78,24 @@ class LoginSerializer(TokenObtainPairSerializer):
         data = super(LoginSerializer,self).validate(attrs)
         
         return data
+
+class ReSendEmailVerifySerializer(serializers.Serializer):
+        email = serializers.EmailField(required=True)
+        
+        def validate_email(self,value):
+            try:
+                user = UserProfiles.objects.filter(email=value).first()
+            except Exception as e:
+                user = None
+            
+            if user is None:
+                raise serializers.ValidationError("User not found.")
+            
+            if user.is_email_verified:
+                raise serializers.ValidationError("User is already verified.")
+            
+            return value
+            
+        
+        
+    
