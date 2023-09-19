@@ -6,8 +6,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import *
 from Infrastructure.kafka.producer import sendData
-
-
+from django.utils.encoding import force_bytes
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
+from Infrastructure.service import Facade
 
 
 #Register API
@@ -17,7 +19,23 @@ class RegisterUserAPI(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+        
+        token = Facade.securityService().generate_token(serializer.instance)
+        data =  {
+            "subject":"Email Verification",
+            "template":"auth/email_verification.html",
+            "to":[serializer.instance.email],
+            "dataBinding":{
+                "user":serializer.instance,
+                "domain":"www.mininy.com",
+                "uid":urlsafe_base64_encode(force_bytes(serializer.instance.pk)),
+                "token":token,
+            }
             
+        }
+        Facade.notificationService().send(data)
+        
+        
         return Response(
             status=status.HTTP_201_CREATED,
             data={"message":"Successfully Registered.",})
@@ -64,6 +82,38 @@ class GetUserAPI(APIView):
 class LoginAPIView(TokenObtainPairView):
     serializer_class = LoginSerializer
 
+
+class ActivateUserAPI(APIView):
+    def get(self,request,uidb64,token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            
+            user = UserProfiles.objects.get(pk=uid)
+        except Exception as e:
+            user = None
+            
+            
+        if user is not None and Facade.securityService().check_token(user,token):
+            user.is_email_verified = True
+            user.save()
+            return Response(
+                status=status.HTTP_200_OK,
+                data={
+                "message":"Email Verified Successfully.",
+            })
+        else:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                "message":"Email Verification Failed.",
+            })
+            
+class ReSendEmailVerify(APIView):
+    def post(self,request):
+        pass
+    
+    
+    
 # class ListAllUsersAPI(APIView):
 #     permission_classes = [IsAuthenticated]
 #     serializer_class = UserProfilesSerializer
