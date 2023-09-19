@@ -109,8 +109,35 @@ class ActivateUserAPI(APIView):
             })
             
 class ReSendEmailVerify(APIView):
+    serializer_class = ReSendEmailVerifySerializer
     def post(self,request):
-        pass
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = UserProfiles.objects.filter(email=serializer.validated_data.get('email')).first()
+            token = Facade.securityService().generate_token(user)
+            data =  {
+                "subject":"Email Verification",
+                "template":"auth/email_verification.html",
+                "to":[user.email],
+                "dataBinding":{
+                    "user":user,
+                    "domain":"www.mininy.com",
+                    "uid":urlsafe_base64_encode(force_bytes(user.pk)),
+                    "token":token,
+                }
+                
+            }
+            Facade.notificationService().send(data)
+        
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+            "message":"Email Verification Link Sent Successfully.",
+        })
+      
+        
+   
+            
     
     
     
