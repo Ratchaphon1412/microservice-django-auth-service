@@ -9,5 +9,6 @@ urlpatterns = [
     path('user/register/', RegisterUserAPI.as_view(), name='register'),
     path('user/update/', UpdateUserAPI.as_view(), name='update'),
     path('user/delete/', DeleteUserAPI.as_view(), name='delete'),
+    path('user/verify/<uidb64>/<token>/', ActivateUserAPI.as_view(), name='verify'),
     path('user/', GetUserAPI.as_view(), name='user'),
 ]
