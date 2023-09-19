@@ -134,7 +134,53 @@ class ReSendEmailVerify(APIView):
             data={
             "message":"Email Verification Link Sent Successfully.",
         })
-   
+
+class AddressAPI(APIView):
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+    def post(self,request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user)
+        return Response(
+            status=status.HTTP_201_CREATED,
+            data={
+            "message":"Address Added Successfully.",
+        })
+        
+    def get(self,request):
+        user = request.user
+        address = user.address_set.all()
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+            "address":AddressSerializer(address,many=True).data,
+            
+        })
+        
+    def put(self,request):
+        address = request.user.address_set.filter(address_id=request.data.get('address_id')).first()
+        serializer = self.serializer_class(address,data=request.data,partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.update(address,serializer.validated_data)
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+            "message":"Address Updated Successfully.",
+        })
+    
+    
+    
+    def delete(self,request):
+        user = request.user
+        address = user.address_set.filter(address_id=request.data.get('address_id')).first()
+        address.delete()
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+            "message":"Address Deleted Successfully.",
+        })
+        
             
     
     
