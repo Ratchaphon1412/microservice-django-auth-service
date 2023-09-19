@@ -12,4 +12,6 @@ urlpatterns = [
     path('user/verify/<uidb64>/<token>/', ActivateUserAPI.as_view(), name='verify'),
     path('user/re-verify', ReSendEmailVerify.as_view(), name='re-verify'),
     path('user/', GetUserAPI.as_view(), name='user'),
+    
+    path('user/address/', AddressAPI.as_view(), name='address'),
 ]
