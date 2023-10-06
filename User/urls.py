@@ -14,4 +14,6 @@ urlpatterns = [
     path('user/', GetUserAPI.as_view(), name='user'),
     
     path('user/address/', AddressAPI.as_view(), name='address'),
+    
+    path('user/infrastructures/', InfrastructureUserAPI.as_view(), name='infrastructures'),
 ]

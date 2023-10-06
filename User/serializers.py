@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import password_validation
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import *
-
+from Infrastructure.kafka.producer import sendData
 
 class UserProfilesSerializer(serializers.ModelSerializer):
     class Meta :
@@ -39,6 +39,9 @@ class UserProfilesSerializer(serializers.ModelSerializer):
             user.set_password(password)
         
         user.save()
+        
+        sendData('create_user',str(user.id))
+        
         return user
     
     def update(self, instance, validated_data):

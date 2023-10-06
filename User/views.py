@@ -181,7 +181,15 @@ class AddressAPI(APIView):
             "message":"Address Deleted Successfully.",
         })
         
-            
+
+class InfrastructureUserAPI(APIView):
+    def post(self,request):
+        user = UserProfiles.objects.get(pk=request.data.get('user_id'))
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+            "user":UserProfilesSerializer(user).data,
+        })
     
     
     
