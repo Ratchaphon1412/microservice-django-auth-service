@@ -6,10 +6,8 @@ services:
       dockerfile: dockerfile.prod
     working_dir: /app
     command: poetry run gunicorn --bind 0.0.0.0:8000 DjangoAuth.wsgi
-
     networks:
       - auth-network
-      - default
     depends_on:
       db:
         condition: service_started
@@ -41,6 +39,3 @@ services:
 networks:
   auth-network:
     driver: bridge
-  default:
-    external:
-      name: kafka-network
