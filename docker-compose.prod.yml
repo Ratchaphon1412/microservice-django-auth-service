@@ -6,6 +6,8 @@ services:
       dockerfile: dockerfile.prod
     working_dir: /app
     command: poetry run gunicorn --bind 0.0.0.0:8000 DjangoAuth.wsgi
+    ports:
+      - "587:587"
     networks:
       - auth-network
     depends_on:
