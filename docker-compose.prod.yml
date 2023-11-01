@@ -28,6 +28,8 @@ services:
       - ./db:/var/lib/mysql
     networks:
       - auth-network
+    ports:
+      - "3308:3308"
   nginx:
     image: nginx:latest
     ports:

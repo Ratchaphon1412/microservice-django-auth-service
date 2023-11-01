@@ -114,6 +114,7 @@ class ReSendEmailVerify(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = UserProfiles.objects.filter(email=serializer.validated_data.get('email')).first()
+            print(user)
             token = Facade.securityService().generate_token(user)
             data =  {
                 "subject":"Email Verification",

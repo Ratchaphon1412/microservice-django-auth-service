@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'User',
-    "Infrastructure"
+    "Infrastructure",
+    'django_seed'
 ]
 
 REST_FRAMEWORK = {

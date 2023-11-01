@@ -30,9 +30,16 @@ services:
       - ./db:/var/lib/mysql
     networks:
       - auth-network
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./Nginx:/etc/nginx/conf.d
+    depends_on:
+      - app-auth-server
+    networks:
+      - auth-network
 networks:
   auth-network:
     driver: bridge
-  default:
-    external:
-      name: kafka-network

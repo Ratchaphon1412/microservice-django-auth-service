@@ -3,6 +3,7 @@ from django.contrib.auth import password_validation
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import *
 from Infrastructure.kafka.producer import sendData
+from django.contrib.auth.models import Group
 
 class UserProfilesSerializer(serializers.ModelSerializer):
     class Meta :
@@ -37,10 +38,12 @@ class UserProfilesSerializer(serializers.ModelSerializer):
         user = self.Meta.model(**validated_data)
         if password is not None:
             user.set_password(password)
-        
+       
+    
+    
         user.save()
         
-        sendData('create_user',str(user.id))
+        # sendData('create_user',str(user.id))
         
         return user
     
@@ -69,8 +72,14 @@ class LoginSerializer(TokenObtainPairSerializer):
         return token
     
     def validate(self,attrs):
+      
         
+       
         user = UserProfiles.objects.filter(email=attrs.get('email','')).first()
+        print(user)
+        
+        if user is None:
+            raise serializers.ValidationError("User not found.")
         
         if not user.is_active:
             raise serializers.ValidationError("User is not active.")
