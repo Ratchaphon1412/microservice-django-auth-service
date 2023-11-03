@@ -33,7 +33,18 @@ class RegisterUserAPI(APIView):
             }
             
         }
-        Facade.notificationService().send(data)
+        
+        try:
+            
+            Facade.notificationService().send(data)
+            
+        except Exception as e:
+            serializer.instance.delete()
+            raise Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                "message": e,
+            })
         
         
         return Response(
@@ -129,6 +140,7 @@ class ReSendEmailVerify(APIView):
                 
             }
             Facade.notificationService().send(data)
+            
         
         return Response(
             status=status.HTTP_200_OK,

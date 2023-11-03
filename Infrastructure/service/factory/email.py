@@ -26,7 +26,7 @@ class Email(Notification):
             mail.send()
              
         except Exception as e:
-            print(e)
-            return False    
+            
+            raise e
         
         
