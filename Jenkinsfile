@@ -3,9 +3,9 @@ pipeline {
     agent any
     
     environment {
-        SSH_HOST = microservice.auth.ratchaphon1412.co
+        SSH_HOST = 'microservice.auth.ratchaphon1412.co'
         SSH_PORT = '22'
-        SSH_USER = root
+        SSH_USER = 'root'
     }
     
     stages {
