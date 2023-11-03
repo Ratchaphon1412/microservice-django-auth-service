@@ -12,18 +12,18 @@ pipeline {
         stage('SSH to Target Server') {
             steps {
                 script {
-                    sshagent(['SSH_KEY']) {
-                        sh """
-                            ssh ${SSH_USER}@${SSH_HOST} -y << EOF
-                        	cd ~/microservice-django-auth-service
-                            docker compose  -f docker-compose.prod.yml down
-                            git pull
-                            docker compose -f docker-compose.prod.yml up -d --build
-                            docker system prune -f
-                            docker compose -f docker-compose.prod.yml restart
-                            EOF
-                        """
-                    }
+                  
+                    sh """
+                        ssh ${SSH_USER}@${SSH_HOST} -y <<EOF
+                        cd ~/microservice-django-auth-service
+                        docker compose  -f docker-compose.prod.yml down
+                        git pull
+                        docker compose -f docker-compose.prod.yml up -d --build
+                        docker system prune -f
+                        docker compose -f docker-compose.prod.yml restart
+EOF
+                    """
+                    
                 }
             }
         }
