@@ -23,7 +23,7 @@ class RegisterUserAPI(APIView):
         token = Facade.securityService().generate_token(serializer.instance)
         data =  {
             "subject":"Email Verification",
-            "template":"auth/email_verification.html",
+            "template":"/auth/email_verification.html",
             "to":[serializer.instance.email],
             "dataBinding":{
                 "user":serializer.instance,
