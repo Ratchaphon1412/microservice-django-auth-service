@@ -8,6 +8,9 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import UserManager
 from django.db import models
 
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
+
 # Create your models here.
 
 
@@ -20,12 +23,36 @@ class UserProfilesManager(UserManager):
         if email is None:
             raise TypeError('Users should have a email')
         
+        
+        
+        
         user = self.model(username=username, email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
-        user.is_email_verified = False
+        user.is_email_verified = True
         user.is_staff = True
         user.is_superuser = True
+        
+        
         user.save(self._db)
+        
+        group , created = Group.objects.get_or_create(name='admin')
+        
+        if created:
+            change_userprofiles = Permission.objects.get(codename='change_userprofiles')
+            delete_userprofiles = Permission.objects.get(codename='delete_userprofiles')
+            view_userprofiles = Permission.objects.get(codename='view_userprofiles')
+            add_userprofiles = Permission.objects.get(codename='add_userprofiles')
+            add_address = Permission.objects.get(codename='add_address')
+            change_address = Permission.objects.get(codename='change_address')
+            delete_address = Permission.objects.get(codename='delete_address')
+            view_address = Permission.objects.get(codename='view_address')
+            group.permissions.set([change_userprofiles,delete_userprofiles,view_userprofiles,add_userprofiles,add_address,change_address,delete_address,view_address])
+        
+        user.groups.add(group)
+        for permission in group.permissions.all():
+            user.user_permissions.add(permission)
+        
+        
         return user
         
         
@@ -58,7 +85,7 @@ class UserProfiles(AbstractBaseUser,PermissionsMixin):
     objects = UserProfilesManager()
     
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username','fullname','phone','gender']
 
 class Address(models.Model):
     address_id = models.AutoField(primary_key=True)

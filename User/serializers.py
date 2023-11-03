@@ -4,8 +4,22 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import *
 from Infrastructure.kafka.producer import sendData
 from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
 
+class GroupSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = Group
+        fields = ('name',)
+        
+class PermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Permission
+        fields = ('name',)
+        
 class UserProfilesSerializer(serializers.ModelSerializer):
+    groups = GroupSerializer(many=True,read_only=True)
+    user_permissions = PermissionSerializer(many=True,read_only=True)
+    
     class Meta :
         model = UserProfiles
         fields = '__all__'
@@ -15,6 +29,7 @@ class UserProfilesSerializer(serializers.ModelSerializer):
             'last_login':{'write_only':True},
             
         }
+        
       
     def validate(self, attrs):
         # password
@@ -30,6 +45,7 @@ class UserProfilesSerializer(serializers.ModelSerializer):
         if errors:
             raise serializers.ValidationError(errors)
         
+        
         return super(UserProfilesSerializer,self).validate(attrs)
     
     def create(self,validated_data):
@@ -39,9 +55,31 @@ class UserProfilesSerializer(serializers.ModelSerializer):
         if password is not None:
             user.set_password(password)
        
-    
-    
+        
+
         user.save()
+        
+        # Create user group if it doesn't exist
+        group, created = Group.objects.get_or_create(name='user')
+        
+        if created:
+            
+            change_userprofiles = Permission.objects.get(codename='change_userprofiles')
+            delete_userprofiles = Permission.objects.get(codename='delete_userprofiles')
+            view_userprofiles = Permission.objects.get(codename='view_userprofiles')
+            add_userprofiles = Permission.objects.get(codename='add_userprofiles')
+            add_address = Permission.objects.get(codename='add_address')
+            change_address = Permission.objects.get(codename='change_address')
+            delete_address = Permission.objects.get(codename='delete_address')
+            view_address = Permission.objects.get(codename='view_address')
+            
+            group.permissions.set([change_userprofiles,delete_userprofiles,view_userprofiles,add_userprofiles,add_address,change_address,delete_address,view_address])
+            user.groups.add(created)
+            
+        user.groups.add(group)
+        print(group.permissions.all())
+        for permission in group.permissions.all():
+            user.user_permissions.add(permission)
         
         # sendData('create_user',str(user.id))
         
@@ -63,6 +101,8 @@ class UserProfilesSerializer(serializers.ModelSerializer):
     
     def delete(self, instance):
         return instance.delete()
+
+    
     
 
 class LoginSerializer(TokenObtainPairSerializer):
@@ -138,6 +178,5 @@ class AddressSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
     
             
-        
-        
+
     
