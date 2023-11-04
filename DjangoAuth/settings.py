@@ -33,6 +33,8 @@ ALLOWED_HOSTS = [ ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "*.ratchaphon1412.co"
+    
 ]
 
 CORS_ALLOW_METHODS = (
