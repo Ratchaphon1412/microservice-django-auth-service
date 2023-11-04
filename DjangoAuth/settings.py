@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = [ ]
+ALLOWED_HOSTS = [ '139.59.122.163', 'localhost', '*.ratchaphon1412.co' ,'*']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
