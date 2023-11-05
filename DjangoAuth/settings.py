@@ -33,8 +33,8 @@ ALLOWED_HOSTS = ['microservice.auth.ratchaphon1412.co','localhost' ,'139.59.122.
 
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000/',
-    'http://127.0.0.1:3000/'
+    'http://localhost:3000',
+    'http://127.0.0.1:3000'
 ]
 
 CORS_ALLOW_CREDENTIALS = True

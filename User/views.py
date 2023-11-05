@@ -56,14 +56,17 @@ class UpdateUserAPI(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserProfilesSerializer
     def put(self,request):
+     
+        
         serializers = self.serializer_class(request.user,data=request.data,partial=True)
         if serializers.is_valid(raise_exception=True):
             serializers.save()
-        return Response(
-            status=status.HTTP_200_OK,
-            data={
-            "message":"User Updated Successfully.",
-        })
+            return Response(
+                status=status.HTTP_200_OK,
+                data={
+                "message":"User Updated Successfully.",
+            })
+     
     
 
 class DeleteUserAPI(APIView):
@@ -195,6 +198,20 @@ class AddressAPI(APIView):
             "message":"Address Deleted Successfully.",
         })
         
+        
+        
+class AddressViewAPI(APIView):
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+    def get(self,request,pk):
+        user = request.user
+        address = user.address_set.filter(address_id=pk).first()
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+            "address":AddressSerializer(address).data,
+            
+        })
 
 class InfrastructureUserAPI(APIView):
     def post(self,request):

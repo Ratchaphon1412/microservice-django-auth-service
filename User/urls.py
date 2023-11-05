@@ -16,4 +16,6 @@ urlpatterns = [
     path('user/address/', AddressAPI.as_view(), name='address'),
     
     path('user/infrastructures/', InfrastructureUserAPI.as_view(), name='infrastructures'),
+    
+    path('user/address/<int:pk>/', AddressViewAPI.as_view(), name='address-detail'),
 ]
