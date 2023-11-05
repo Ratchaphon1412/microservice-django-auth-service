@@ -11,6 +11,8 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from Infrastructure.service import Facade
 
+import json
+
 
 #Register API
 class RegisterUserAPI(APIView):
@@ -45,11 +47,18 @@ class RegisterUserAPI(APIView):
                 data={
                 "message": e,
             })
+        tempdict = {
+            "id":serializer.data.get('id'),
+            "username":serializer.data.get('fullname'),
+            "email":serializer.data.get('email'),
+        }
         
+            
+        sendData("create_user",json.dumps(tempdict))
         
         return Response(
             status=status.HTTP_201_CREATED,
-            data={"message":"Successfully Registered.",})
+            data={"message":"Successfully Registered."})
         
     
 class UpdateUserAPI(APIView):
