@@ -83,10 +83,11 @@ class GetUserAPI(APIView):
     serializer_class = UserProfilesSerializer
     def get(self,request):
         serializers = self.serializer_class(request.user)
+        
         return Response(
             status=status.HTTP_200_OK,
             data={
-            "user":UserProfilesSerializer(serializers.instance).data,
+            "user":serializers.data,
             "message":"User Details.",
         })
 

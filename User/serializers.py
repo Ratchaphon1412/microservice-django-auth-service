@@ -15,15 +15,19 @@ class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
         fields = ('name',)
-        
+
+
+
 class UserProfilesSerializer(serializers.ModelSerializer):
     groups = GroupSerializer(many=True,read_only=True)
     user_permissions = PermissionSerializer(many=True,read_only=True)
     
+    
+    
     class Meta :
         model = UserProfiles
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = ['id','address']
         extra_kwargs = {
             'password':{'write_only':True},
             'last_login':{'write_only':True},
@@ -104,51 +108,8 @@ class UserProfilesSerializer(serializers.ModelSerializer):
 
     
     
-
-class LoginSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls,user):
-        token = super().get_token(user)
-        return token
-    
-    def validate(self,attrs):
-      
-        
-       
-        user = UserProfiles.objects.filter(email=attrs.get('email','')).first()
-        print(user)
-        
-        if user is None:
-            raise serializers.ValidationError("User not found.")
-        
-        if not user.is_active:
-            raise serializers.ValidationError("User is not active.")
-        
-        if not user.is_email_verified:
-            raise serializers.ValidationError("User is not verified.")
-        
-        data = super(LoginSerializer,self).validate(attrs)
-        
-        return data
-
-class ReSendEmailVerifySerializer(serializers.Serializer):
-        email = serializers.EmailField(required=True)
-        
-        def validate_email(self,value):
-            try:
-                user = UserProfiles.objects.filter(email=value).first()
-            except Exception as e:
-                user = None
-            
-            if user is None:
-                raise serializers.ValidationError("User not found.")
-            
-            if user.is_email_verified:
-                raise serializers.ValidationError("User is already verified.")
-            
-            return value
-        
 class AddressSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=UserProfiles.objects.all())
     class Meta:
         model = Address
         fields = ['address_id','fullname','phone','detail_address','country','province','zip_code']
@@ -176,6 +137,55 @@ class AddressSerializer(serializers.ModelSerializer):
         instance.save()
         
         return super().update(instance, validated_data)
+
+    
+
+
+class LoginSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls,user):
+        token = super().get_token(user)
+        return token
+    
+    def validate(self,attrs):
+      
+        
+       
+        user = UserProfiles.objects.filter(email=attrs.get('email','')).first()
+        print(user)
+        
+        if user is None:
+            raise serializers.ValidationError("User not found.")
+        
+        if not user.is_active:
+            raise serializers.ValidationError("User is not active.")
+        
+        if not user.is_email_verified:
+            raise serializers.ValidationError("User is not verified.")
+        
+        data = super(LoginSerializer,self).validate(attrs)
+        print(data)
+        
+        return data
+
+class ReSendEmailVerifySerializer(serializers.Serializer):
+        email = serializers.EmailField(required=True)
+        
+        def validate_email(self,value):
+            try:
+                user = UserProfiles.objects.filter(email=value).first()
+            except Exception as e:
+                user = None
+            
+            if user is None:
+                raise serializers.ValidationError("User not found.")
+            
+            if user.is_email_verified:
+                raise serializers.ValidationError("User is already verified.")
+            
+            return value
+        
+
     
             
 
