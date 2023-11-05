@@ -109,7 +109,7 @@ class UserProfilesSerializer(serializers.ModelSerializer):
     
     
 class AddressSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=UserProfiles.objects.all())
+    
     class Meta:
         model = Address
         fields = ['address_id','fullname','phone','detail_address','country','province','zip_code']
