@@ -30,6 +30,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG')
 
 ALLOWED_HOSTS = ['microservice.auth.ratchaphon1412.co','localhost' ,'139.59.122.163']
+
+FRONTEND_URL= os.getenv('FRONTEND_URL')
+
 # ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
