@@ -31,7 +31,7 @@ class RegisterUserAPI(APIView):
             "template":"auth/email_verification.html",
             "to":[serializer.instance.email],
             "dataBinding":{
-                "url":settings.SSH_HOST,
+                "url":settings.FRONTEND_URL,
                 "user":serializer.instance,
                 "domain":"www.mininy.com",
                 "uid":urlsafe_base64_encode(force_bytes(serializer.instance.pk)),
