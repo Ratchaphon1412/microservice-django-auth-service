@@ -27,10 +27,11 @@ class UserProfilesSerializer(serializers.ModelSerializer):
     class Meta :
         model = UserProfiles
         fields = '__all__'
-        read_only_fields = ['id','address']
+        read_only_fields = ['id','address','customer_omise_id']
         extra_kwargs = {
             'password':{'write_only':True},
             'last_login':{'write_only':True},
+            
             
         }
         

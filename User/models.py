@@ -78,6 +78,7 @@ class UserProfiles(AbstractBaseUser,PermissionsMixin):
     password = models.CharField(max_length=255, blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     gender = models.CharField(max_length=6, choices=GENDER_IN_CHOICES, null=True, blank=True)
+    customer_omise_id= models.CharField(max_length=255, blank=True, null=True)
     is_email_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

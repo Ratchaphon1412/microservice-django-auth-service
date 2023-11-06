@@ -19,6 +19,8 @@ pipeline {
                         docker compose  -f docker-compose.prod.yml down
                         git pull
                         docker compose -f docker-compose.prod.yml up -d --build
+                        docker compose exec -it app-auth-server bash -c "poetry run python3 manage.py makemigrations"
+                        docker compose exec -it app-auth-server bash -c "poetry run python3 manage.py migrate --no-input"
                         docker system prune -f
                         docker compose -f docker-compose.prod.yml restart
 EOF
