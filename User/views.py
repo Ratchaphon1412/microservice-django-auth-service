@@ -143,7 +143,7 @@ class ReSendEmailVerify(APIView):
                 "to":[user.email],
                 "dataBinding":{
                     "user":user,
-                    "url": settings.FRONTEND_URL,
+                    "url": settings.BACKEND_URL,
                     "domain":"www.mininy.com",
                     "uid":urlsafe_base64_encode(force_bytes(user.pk)),
                     "token":token,
@@ -153,11 +153,7 @@ class ReSendEmailVerify(APIView):
             Facade.notificationService().send(data)
             
         
-        return Response(
-            status=status.HTTP_200_OK,
-            data={
-            "message":"Email Verification Link Sent Successfully.",
-        })
+        return redirect(settings.FRONTEND_URL+'/auth/login')
 
 class AddressAPI(APIView):
     serializer_class = AddressSerializer
