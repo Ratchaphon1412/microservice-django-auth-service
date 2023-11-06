@@ -20,8 +20,6 @@ RUN poetry install --no-dev
 
 
 
-RUN poetry run python3 manage.py makemigrations 
-RUN poetry run python3 manage.py migrate 
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1

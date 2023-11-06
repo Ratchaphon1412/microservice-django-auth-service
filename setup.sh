@@ -1,5 +1,5 @@
 #!/bin/bash
-docker compose -f docker-compose.yml exec app-auth-server bash
+poetry run python3 manage.py collectstatic --noinput
 poetry run python3 manage.py makemigrations 
 poetry run python3 manage.py migrate
-exit
+poetry run gunicorn --bind 0.0.0.0:8024 DjangoAuth.wsgi
