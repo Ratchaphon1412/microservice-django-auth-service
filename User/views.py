@@ -143,6 +143,7 @@ class ReSendEmailVerify(APIView):
                 "to":[user.email],
                 "dataBinding":{
                     "user":user,
+                    "url": settings.FRONTEND_URL,
                     "domain":"www.mininy.com",
                     "uid":urlsafe_base64_encode(force_bytes(user.pk)),
                     "token":token,
