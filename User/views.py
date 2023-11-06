@@ -10,6 +10,7 @@ from django.utils.encoding import force_bytes
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from Infrastructure.service import Facade
+from django.conf import settings
 
 import json
 
@@ -28,6 +29,7 @@ class RegisterUserAPI(APIView):
             "template":"auth/email_verification.html",
             "to":[serializer.instance.email],
             "dataBinding":{
+                "url":settings.FRONTEND_URL,
                 "user":serializer.instance,
                 "domain":"www.mininy.com",
                 "uid":urlsafe_base64_encode(force_bytes(serializer.instance.pk)),
