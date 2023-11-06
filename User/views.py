@@ -12,6 +12,8 @@ from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from Infrastructure.service import Facade
 from django.conf import settings
 
+from django.shortcuts import redirect
+
 import json
 
 
@@ -29,7 +31,7 @@ class RegisterUserAPI(APIView):
             "template":"auth/email_verification.html",
             "to":[serializer.instance.email],
             "dataBinding":{
-                "url":settings.FRONTEND_URL,
+                "url":settings.SSH_HOST,
                 "user":serializer.instance,
                 "domain":"www.mininy.com",
                 "uid":urlsafe_base64_encode(force_bytes(serializer.instance.pk)),
@@ -122,17 +124,10 @@ class ActivateUserAPI(APIView):
         if user is not None and Facade.securityService().check_token(user,token):
             user.is_email_verified = True
             user.save()
-            return Response(
-                status=status.HTTP_200_OK,
-                data={
-                "message":"Email Verified Successfully.",
-            })
+            return redirect(settings.FRONTEND_URL+'/auth/login')
+            
         else:
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={
-                "message":"Email Verification Failed.",
-            })
+            return redirect(settings.FRONTEND_URL+'/')
             
 class ReSendEmailVerify(APIView):
     serializer_class = ReSendEmailVerifySerializer
