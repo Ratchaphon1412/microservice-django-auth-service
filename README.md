@@ -1,6 +1,6 @@
 # Django Authentication Microservice
 
-![Logo](https://raw.githubusercontent.com/CS211-651/project211-hardcodeexecutable/featureUser/docs/image/Group%202.png?token=GHSAT0AAAAAACG72KP2PYCGYRS3XBBLC7DKZKRCCIA)
+![Logo](https://github.com/CS211-651/project211-hardcodeexecutable/blob/featureUser/docs/image/Group%202.png)
 
 ## Acknowledgements
 
